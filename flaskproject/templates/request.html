@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{{ url_for('user_requests') }}">{{ emails_request.sender.email }}</a>
+        <small>{{ emails_request.name }}</small>
+        <small class="text-muted">{{ emails_request.date_submitted.strftime('%Y-%m-%d') }}</small>
+      </div>
+      <h2 class="article-title">{{ emails_request.subject }}</h2>
+      <p class="article-content">{{ emails_request.content }}</p>
+      <p class="text-muted">Teams: {{ emails_request.teams }}</p>
+    </div>
+  </article>
+{% endblock content %}

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="mb-3">Requests by {{ user.email }} ({{ requests.total }})</h1>
+    {% for request in requests.items %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('user_requests') }}">{{ request.sender.email }}</a>
+              <small>{{ request.name }}</small>
+              <small class="text-muted">{{ request.date_submitted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('request_details', request_id=request.id) }}">{{ request.subject }}</a></h2>
+            <p class="article-content">{{ request.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+    {% for page_num in requests.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+        {% if requests.page == page_num %}
+          <a class="btn btn-info mb-4" href="{{ url_for('user_requests', email=user.email, page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <a class="btn btn-outline-info mb-4" href="{{ url_for('user_requests', email=user.email, page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
+{% endblock content %}
