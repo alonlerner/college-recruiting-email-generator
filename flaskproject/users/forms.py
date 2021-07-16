@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_login import current_user
 from flaskproject.models import User
-
 
 class RegistrationForm(FlaskForm):
     email=StringField('Email', validators=[DataRequired(), Email()])
@@ -31,13 +30,6 @@ class UpdateAccountForm(FlaskForm):
             user=User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('This email is taken. Please choose a different one.')
-
-class RequestForm(FlaskForm):
-    name=StringField('Name', validators=[DataRequired()])
-    subject=StringField('Subject', validators=[DataRequired()])
-    content=TextAreaField('Content', validators=[DataRequired()])
-    teams=StringField('Teams', validators=[DataRequired()])
-    submit=SubmitField('Send Emails')
 
 class RequestResetForm(FlaskForm):
     email=StringField('Email', validators=[DataRequired(), Email()])
