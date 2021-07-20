@@ -5,6 +5,7 @@ from flaskproject import db, mail
 from flaskproject.models import Request
 from flaskproject.requests.forms import RequestForm, EmailCheckForm
 from flask_mail import Message
+from smtplib import SMTP
 
 requests=Blueprint('requests', __name__)
 
@@ -33,9 +34,6 @@ def check_email():
     form=EmailCheckForm()
     if form.validate_on_submit():
         current_app.config.update(dict(
-            MAIL_SERVER='smtp.gmail.com',
-            MAIL_PORT=465,
-            MAIL_USE_SSL=True,
             MAIL_USERNAME=form.email.data,
             MAIL_PASSWORD=form.password.data
         ))
@@ -44,7 +42,7 @@ def check_email():
         try:
             mail.send(msg)
         except:
-            flash('The email and password are invalid or the less secure mode is not on.','danger')
+            flash('Error! The email and password are invalid or the less secure apps on your gmail account is turned off.','danger')
         else:
             senderInfo=[form.email.data, form.password.data]
             return redirect(url_for('requests.new_request', senderInfo=senderInfo))

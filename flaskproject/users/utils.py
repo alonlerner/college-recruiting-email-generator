@@ -6,9 +6,6 @@ from flaskproject import mail
 def send_reset_email(user):
     token=user.get_reset_token()
     current_app.config.update(dict(
-            MAIL_SERVER='smtp.gmail.com',
-            MAIL_PORT=465,
-            MAIL_USE_SSL=True,
             MAIL_USERNAME='collegeemailsgenerator@gmail.com',
             MAIL_PASSWORD='Medical2020!'
         ))
