@@ -17,8 +17,10 @@ def register():
         user=User(email=form.email.data,password=hashed_password)
         db.session.add(user)
         db.session.commit()
+        user=User.query.filter_by(email=form.email.data).first()
+        login_user(user, remember=form.remember.data)
         flash(f'Account was created for {form.email.data}!', 'success')
-        return redirect(url_for('users.login'))
+        return redirect(url_for('main.home'))
     return render_template('register.html', title='Register', form=form)
 
 @users.route('/login', methods=['GET', 'POST'])

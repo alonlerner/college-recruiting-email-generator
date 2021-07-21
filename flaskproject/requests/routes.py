@@ -44,6 +44,6 @@ def check_email():
         except:
             flash('Error! The email and password are invalid or the less secure apps on your gmail account is turned off.','danger')
         else:
-            senderInfo=[form.email.data, form.password.data]
+            senderInfo={'first_name': form.first_name.data, 'last_name': form.last_name.data, 'email': form.email.data, 'password': form.password.data}
             return redirect(url_for('requests.new_request', senderInfo=senderInfo))
     return render_template('check_email.html', title='New Request', form=form)
