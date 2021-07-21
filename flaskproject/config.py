@@ -1,7 +1,7 @@
 
 class Config:
     SECRET_KEY='445040d2efeeab69f6c071bacbf97546'
-    SQLALCHEMY_DATABASE_URI='sqlite:///site.db'
+    SQLALCHEMY_DATABASE_URI='mysql+pymysql://b99f2ddb990b61:5b9357e7@us-cdbr-east-04.cleardb.com/heroku_c10c74353d74e6b'
     MAIL_SERVER='smtp.gmail.com'
     MAIL_PORT=465
     MAIL_USE_SSL=True
