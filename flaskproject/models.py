@@ -9,6 +9,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
+    __tablename__ = "users"
     id=db.Column(db.Integer, primary_key=True)
     email=db.Column(db.String(120),unique=True, nullable=False)
     password=db.Column(db.String(60),nullable=False)
@@ -30,14 +31,47 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.email}, {self.id}')"
 
+rtrelationship=db.Table('rtrelationship', 
+    db.Column('request_id', db.Integer, db.ForeignKey('requests.request_id')),
+    db.Column('team_id', db.Integer, db.ForeignKey('teams.team_id')),
+    extend_existing=True
+)
+
 class Request(db.Model):
+    __tablename__ = "requests"
     id=db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String(40), nullable=False)
     subject=db.Column(db.String(100), nullable=False)
     date_submitted=db.Column(db.DateTime,nullable=False,default=datetime.utcnow)
     content=db.Column(db.Text, nullable=False)
     teams=db.Column(db.Text, nullable=False)
-    user_id=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id=db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
         return f"Request('{self.name}, {self.subject}, {self.date_submitted}')"
+
+class Team(db.Model):
+    __tablename__ = "teams"
+    id=db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(40), nullable=False)
+    division=db.Column(db.String(40), nullable=False)
+    conference=db.Column(db.String(40), nullable=False)
+    state=db.Column(db.String(40), nullable=False)
+    mascot=db.Column(db.String(40), nullable=False)
+    coaches=db.relationship('Coach', backref='team', lazy=True)
+    teams=db.relationship('Request', secondary=rtrelationship, backref=db.backref('teams', lazy='dynamic'))
+
+    def __repr__(self):
+        return f"Team('{self.name}, {self.division}, {self.conference}, {self.state}')"
+
+class Coach(db.Model):
+    __tablename__ = "coaches"
+    id=db.Column(db.Integer, primary_key=True)
+    first_name=db.Column(db.String(20), nullable=False)
+    last_name=db.Column(db.String(20), nullable=False)
+    position=db.Column(db.String(20), nullable=False)
+    email=db.Column(db.String(120),unique=True, nullable=False)
+    team_id=db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Coach('{self.first_name}, {self.last_name}, {self.email}, {self.team_id}')"
