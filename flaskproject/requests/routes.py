@@ -14,7 +14,7 @@ requests=Blueprint('requests', __name__)
 def new_request():
     form=RequestForm()
     if form.validate_on_submit():
-        emails_request=Request(name=form.name.data, subject=form.subject.data, content=form.content.data, teams=form.teams.data, sender=current_user)
+        emails_request=Request(first_name=request.args.get('first_name'), last_name=request.args.get('last_name'), subject=form.subject.data, content=form.content.data, sender=current_user)
         db.session.add(emails_request)
         db.session.commit()
         flash('Your emails have been sent!', 'success')
@@ -45,5 +45,5 @@ def check_email():
             flash('Error! The email and password are invalid or the less secure apps on your gmail account is turned off.','danger')
         else:
             senderInfo={'first_name': form.first_name.data, 'last_name': form.last_name.data, 'email': form.email.data, 'password': form.password.data}
-            return redirect(url_for('requests.new_request', senderInfo=senderInfo))
+            return redirect(url_for('requests.new_request', first_name= form.first_name.data, last_name= form.last_name.data, email= form.email.data, password= form.password.data))
     return render_template('check_email.html', title='New Request', form=form)

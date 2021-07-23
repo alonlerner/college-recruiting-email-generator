@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     id=db.Column(db.Integer, primary_key=True)
     email=db.Column(db.String(120),unique=True, nullable=False)
     password=db.Column(db.String(60),nullable=False)
+    access=db.Column(db.String(10), nullable=False, default='user')
     requests=db.relationship('Request', backref='sender',lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
@@ -43,8 +44,8 @@ class Request(db.Model):
     first_name=db.Column(db.String(40), nullable=False)
     last_name=db.Column(db.String(40), nullable=False)
     subject=db.Column(db.String(100), nullable=False)
-    date_submitted=db.Column(db.DateTime,nullable=False,default=datetime.utcnow)
     content=db.Column(db.Text, nullable=False)
+    date_submitted=db.Column(db.DateTime,nullable=False,default=datetime.utcnow)
     user_id=db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
