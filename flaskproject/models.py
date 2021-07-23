@@ -9,7 +9,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
-    __tablename__ = "user"
+    __tablename__ = "users"
     id=db.Column(db.Integer, primary_key=True)
     email=db.Column(db.String(120),unique=True, nullable=False)
     password=db.Column(db.String(60),nullable=False)
@@ -40,11 +40,12 @@ rtrelationship=db.Table('rtrelationship',
 class Request(db.Model):
     __tablename__ = "requests"
     id=db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String(40), nullable=False)
+    first_name=db.Column(db.String(40), nullable=False)
+    last_name=db.Column(db.String(40), nullable=False)
     subject=db.Column(db.String(100), nullable=False)
     date_submitted=db.Column(db.DateTime,nullable=False,default=datetime.utcnow)
     content=db.Column(db.Text, nullable=False)
-    user_id=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id=db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
         return f"Request('{self.name}, {self.subject}, {self.date_submitted}')"
