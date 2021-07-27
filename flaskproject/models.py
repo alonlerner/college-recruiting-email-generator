@@ -50,7 +50,7 @@ class Request(db.Model):
     user_id=db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
-        return f"Request('{self.name}, {self.subject}, {self.date_submitted}')"
+        return f"Request('{self.first_name}, {self.last_name}, {self.subject}, {self.date_submitted}')"
 
 class Team(db.Model):
     __tablename__ = "teams"
