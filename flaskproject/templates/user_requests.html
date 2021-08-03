@@ -7,7 +7,7 @@
             <div class="article-metadata">
               <a class="mr-2" href="{{ url_for('users.user_requests') }}">{{ request.sender.email }}</a>
               <small>{{ request.name }}</small>
-              <small class="text-muted">{{ request.date_submitted.strftime('%Y-%m-%d') }}</small>
+              <small class="text-muted">{{ request.date_submitted.strftime('%m/%d/%Y') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('requests.request_details', request_id=request.id) }}">{{ request.subject }}</a></h2>
             <p class="article-content">{{ request.content }}</p>
