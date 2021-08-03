@@ -5,7 +5,7 @@ from flaskproject import db, mail
 from flaskproject.models import Request, Team
 from flaskproject.requests.forms import RequestForm, EmailCheckForm
 from flask_mail import Message
-from flaskproject.requests.utils import default_subject
+from flaskproject.requests.utils import default_subject, default_content
 
 requests=Blueprint('requests', __name__)
 
@@ -28,7 +28,7 @@ def new_request():
         session.pop('password')
         flash('Your emails have been sent!', 'success')
         return redirect(url_for('main.home'))
-    return render_template('create_request.html', title='New Request', form=form, default_subject=default_subject)
+    return render_template('create_request.html', title='New Request', form=form, default_subject=default_subject, default_content=default_content)
 
 @requests.route("/request/<int:request_id>")
 def request_details(request_id):

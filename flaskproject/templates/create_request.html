@@ -15,7 +15,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.subject(class="form-control form control-lg", value=default_subject) }}
+                        {{ form.subject(class="form-control form control-lg", placeholder=default_subject) }}
                     {% endif %}
                 </div>
                 <div class="form-group">
@@ -28,7 +28,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.content(class="form-control form control-lg") }}
+                        {{ form.content(class="form-control form control-lg email-content", placeholder=default_content) }}
                     {% endif %}
                 </div>
                 <div class="form-group">
