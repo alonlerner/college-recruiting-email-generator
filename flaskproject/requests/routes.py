@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, abort, Blu
 from flask.globals import current_app
 from flask_login import current_user, login_required
 from flaskproject import db, mail
-from flaskproject.models import Request
+from flaskproject.models import Request, Team
 from flaskproject.requests.forms import RequestForm, EmailCheckForm
 from flask_mail import Message
 from flaskproject.requests.utils import default_subject
@@ -15,9 +15,12 @@ def new_request():
     if not 'first_name' in session:
         return redirect(url_for('requests.check_email'))
     form=RequestForm()
+    form.teams.choices = [(row.id, f'{row.name} ({row.division})') for row in Team.query.all()]
     if form.validate_on_submit():
         emails_request=Request(first_name=session['first_name'], last_name=session['last_name'], email=session['email'], subject=form.subject.data, content=form.content.data, sender=current_user)
         db.session.add(emails_request)
+        for team in form.teams.data:
+            emails_request.teams.append(Team.query.filter_by(id=team).first())
         db.session.commit()
         session.pop('first_name')
         session.pop('last_name')
