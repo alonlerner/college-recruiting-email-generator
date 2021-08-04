@@ -17,13 +17,11 @@ def new_request():
     form=RequestForm()
     form.teams.choices = [(row.id, f'{row.name} ({row.division})') for row in Team.query.all()]
     if form.validate_on_submit():
-        emails_request=Request(first_name=session['first_name'], last_name=session['last_name'], email=session['email'], subject=form.subject.data, content=form.content.data, sender=current_user)
+        emails_request=Request(email=session['email'], subject=form.subject.data, content=form.content.data, sender=current_user)
         db.session.add(emails_request)
         for team in form.teams.data:
             emails_request.teams.append(Team.query.filter_by(id=team).first())
         db.session.commit()
-        session.pop('first_name')
-        session.pop('last_name')
         session.pop('email')
         session.pop('password')
         flash('Your emails have been sent!', 'success')
@@ -53,8 +51,6 @@ def check_email():
         except:
             flash('Error! The email and password are invalid or the less secure apps on your gmail account is turned off.','danger')
         else:
-            session['first_name']=form.first_name.data
-            session['last_name']=form.last_name.data
             session['email']=form.email.data
             session['password']=form.password.data
             return redirect(url_for('requests.new_request'))
