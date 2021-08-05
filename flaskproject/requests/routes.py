@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, abort, Blu
 from flask.globals import current_app
 from flask_login import current_user, login_required
 from flaskproject import db, mail
-from flaskproject.models import Request, Team
+from flaskproject.models import Request, Team, Coach
 from flaskproject.requests.forms import RequestForm, EmailCheckForm, ReviewRequestForm
 from flask_mail import Message
 from flaskproject.requests.utils import default_subject, default_content
@@ -56,6 +56,8 @@ def review_request():
     teams=''
     for team in session['teams']:
         teams = teams + Team.query.filter_by(id=team).first().name + '; '
+    subject=session['subject'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(team_id=team).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(team_id=team).first().last_name)
+    content=session['content'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(team_id=team).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(team_id=team).first().last_name)
     if form.validate_on_submit():
         emails_request=Request(email=session['email'], subject=session['subject'], content=session['content'], sender=current_user)
         db.session.add(emails_request)
@@ -69,7 +71,7 @@ def review_request():
         session.pop('teams')
         flash('Your emails have been sent!', 'success')
         return redirect(url_for('main.home'))
-    return render_template('review_request.html', title='Review Request', form=form, email=session['email'], subject=session['subject'], content=session['content'], teams=teams)
+    return render_template('review_request.html', title='Review Request', form=form, email=session['email'], subject=subject, content=content, teams=teams)
     
 
 @requests.route("/request/<int:request_id>")
