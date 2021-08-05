@@ -3,37 +3,11 @@ from flask.globals import current_app
 from flask_login import current_user, login_required
 from flaskproject import db, mail
 from flaskproject.models import Request, Team
-from flaskproject.requests.forms import RequestForm, EmailCheckForm
+from flaskproject.requests.forms import RequestForm, EmailCheckForm, ReviewRequestForm
 from flask_mail import Message
 from flaskproject.requests.utils import default_subject, default_content
 
 requests=Blueprint('requests', __name__)
-
-@requests.route("/request/new", methods=['GET', 'POST'])
-@login_required
-def new_request():
-    if not 'first_name' in session:
-        return redirect(url_for('requests.check_email'))
-    form=RequestForm()
-    form.teams.choices = [(row.id, f'{row.name} ({row.division})') for row in Team.query.all()]
-    if form.validate_on_submit():
-        emails_request=Request(email=session['email'], subject=form.subject.data, content=form.content.data, sender=current_user)
-        db.session.add(emails_request)
-        for team in form.teams.data:
-            emails_request.teams.append(Team.query.filter_by(id=team).first())
-        db.session.commit()
-        session.pop('email')
-        session.pop('password')
-        flash('Your emails have been sent!', 'success')
-        return redirect(url_for('main.home'))
-    return render_template('create_request.html', title='New Request', form=form, default_subject=default_subject, default_content=default_content)
-
-@requests.route("/request/<int:request_id>")
-def request_details(request_id):
-    emails_request=Request.query.get_or_404(request_id)
-    if emails_request.sender.email != current_user.email:
-        return redirect(url_for('main.home'))
-    return render_template('request.html', subject=emails_request.subject, emails_request=emails_request)
 
 @requests.route("/request/check_email", methods=['GET','POST'])
 @login_required
@@ -55,3 +29,53 @@ def check_email():
             session['password']=form.password.data
             return redirect(url_for('requests.new_request'))
     return render_template('check_email.html', title='New Request', form=form)
+
+@requests.route("/request/new", methods=['GET', 'POST'])
+@login_required
+def new_request():
+    if not 'email' in session:
+        return redirect(url_for('requests.check_email'))
+    form=RequestForm()
+    form.teams.choices = [(row.id, f'{row.name} ({row.division}, {row.conference}, {row.state})') for row in Team.query.all()]
+    if form.validate_on_submit():
+        # print(form.subject.data.replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot))
+        session['subject']=form.subject.data
+        session['content']=form.content.data
+        session['teams']=form.teams.data
+        return redirect(url_for('requests.review_request'))
+    return render_template('create_request.html', title='New Request', form=form, default_subject=default_subject, default_content=default_content)
+
+@requests.route("/request/review", methods=['GET', 'POST'])
+@login_required
+def review_request():
+    if not 'email' in session:
+        return redirect(url_for('requests.check_email'))
+    elif not 'subject' in session:
+        return redirect(url_for('requests.new_request'))
+    form=ReviewRequestForm()
+    teams=''
+    for team in session['teams']:
+        teams = teams + Team.query.filter_by(id=team).first().name + '; '
+    if form.validate_on_submit():
+        emails_request=Request(email=session['email'], subject=session['subject'], content=session['content'], sender=current_user)
+        db.session.add(emails_request)
+        for team in session['teams']:
+            emails_request.teams.append(Team.query.filter_by(id=team).first())
+        db.session.commit()
+        session.pop('email')
+        session.pop('password')
+        session.pop('subject')
+        session.pop('content')
+        session.pop('teams')
+        flash('Your emails have been sent!', 'success')
+        return redirect(url_for('main.home'))
+    return render_template('review_request.html', title='Review Request', form=form, email=session['email'], subject=session['subject'], content=session['content'], teams=teams)
+    
+
+@requests.route("/request/<int:request_id>")
+def request_details(request_id):
+    emails_request=Request.query.get_or_404(request_id)
+    if emails_request.sender.email != current_user.email:
+        return redirect(url_for('main.home'))
+    return render_template('request.html', subject=emails_request.subject, emails_request=emails_request)
+

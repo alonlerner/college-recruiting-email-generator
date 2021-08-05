@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Review Request</legend>
+                <div class="form-group">
+                    {{ form.email(class="form-control form control-lg", value=email, readonly="readonly") }}
+                </div>
+                <div class="form-group">
+                    {{ form.subject(class="form-control form control-lg", value=subject, readonly="readonly") }}
+                </div>
+                <div class="form-group">
+                    {{ form.content(class="form-control form control-lg email-content", placeholder=content, readonly="readonly") }}
+                </div>
+                <div class="form-group">
+                    {{ form.teams(class="form-control form control-lg teams-para", placeholder=teams, readonly="readonly") }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
