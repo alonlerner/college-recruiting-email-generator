@@ -48,7 +48,7 @@ class Request(db.Model):
     user_id=db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
-        return f"Request('{self.first_name}, {self.last_name}, {self.subject}, {self.date_submitted}')"
+        return f"Request('{self.email}, {self.subject}, {self.date_submitted}, {self.id}')"
 
 class Team(db.Model):
     __tablename__ = "teams"
@@ -62,7 +62,7 @@ class Team(db.Model):
     teams=db.relationship('Request', secondary=rtrelationship, backref=db.backref('teams', lazy='dynamic'))
 
     def __repr__(self):
-        return f"Team('{self.name}, {self.division}, {self.conference}, {self.state}')"
+        return f"Team('{self.name}, {self.division}, {self.conference}, {self.state}, {self.id}')"
 
 class Coach(db.Model):
     __tablename__ = "coaches"
