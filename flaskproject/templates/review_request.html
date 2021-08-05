@@ -6,15 +6,22 @@
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Review Request</legend>
                 <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
                     {{ form.email(class="form-control form control-lg", value=email, readonly="readonly") }}
                 </div>
                 <div class="form-group">
+                    <label class="form-control-label"><b>Email Example:</b></label>
+                </div>
+                <div class="form-group">
+                    {{ form.subject.label(class="form-control-label") }}
                     {{ form.subject(class="form-control form control-lg", value=subject, readonly="readonly") }}
                 </div>
                 <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
                     {{ form.content(class="form-control form control-lg email-content", placeholder=content, readonly="readonly") }}
                 </div>
                 <div class="form-group">
+                    {{ form.teams.label(class="form-control-label") }}
                     {{ form.teams(class="form-control form control-lg teams-para", placeholder=teams, readonly="readonly") }}
                 </div>
             </fieldset>
