@@ -5,7 +5,7 @@ from flaskproject import db, mail
 from flaskproject.models import Request, Team, Coach
 from flaskproject.requests.forms import RequestForm, EmailCheckForm, ReviewRequestForm
 from flask_mail import Message
-from flaskproject.requests.utils import default_subject, default_content
+from flaskproject.requests.utils import default_subject, default_content, send_emails
 
 requests=Blueprint('requests', __name__)
 
@@ -64,6 +64,12 @@ def review_request():
         for team in session['teams']:
             emails_request.teams.append(Team.query.filter_by(id=team).first())
         db.session.commit()
+        # for team in session['teams']:
+        #     for coach in Coach.query.filter_by(team_id=team).all():
+        #         print(session['subject'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name))
+        #         print(session['content'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name))
+        #         print('-----------------------------------------')
+        send_emails()
         session.pop('email')
         session.pop('password')
         session.pop('subject')
