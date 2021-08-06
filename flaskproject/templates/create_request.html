@@ -6,6 +6,16 @@
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">New Request</legend>
                 <div class="form-group">
+                    <label class="form-control-label"><b>Use the following combinations to express the corresponded data (the combinations are case sensative and sensative to white spaces):</b></label>
+                    <label class="form-control-label">[team] - the college's name (e.g. NJIT)</label><br>
+                    <label class="form-control-label">[division] - the college's division (e.g. NCAA division I)</label><br>
+                    <label class="form-control-label">[conference] - the college's conference (e.g. America East)</label><br>
+                    <label class="form-control-label">[state] - the college's name (e.g. Alabama)</label><br>
+                    <label class="form-control-label">[mascot] - the college's mascot (e.g. lion)</label><br>
+                    <label class="form-control-label">[coach-first-name] - the coach's first name (e.g. John)</label><br>
+                    <label class="form-control-label">[coach-last-name] - the coach's last name (e.g. James)</label>
+                </div>
+                <div class="form-group">
                     {{ form.subject.label(class="form-control-label") }}
                     {% if form.subject.errors %}
                         {{ form.subject(class="form-control form-control-lg is-invalid") }}
