@@ -9,7 +9,10 @@ default_subject='XXX XXX - Prospective Student-Athlete'
 
 default_content='''Hello Coach [coach-last-name],
 
-My name is XXX XXX and I am a swimmer from XXX. My SAT score is XXX. Please recruit me!'''
+My name is XXX XXX and I am a swimmer from XXX. I am interesting in joining [team] and be a [mascot]. Can't wait to compete in [division] level and in the [conference] championship.
+
+Thank you,
+XXX'''
 
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
@@ -23,8 +26,13 @@ def send_emails():
     mail.init_app(current_app)
     for team in session['teams']:
             for coach in Coach.query.filter_by(team_id=team).all():
-                subject=session['subject'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
-                content=session['content'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
+                subject=session['subject'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[state]", Team.query.filter_by(id=team).first().state).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
+                content=session['content'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[state]", Team.query.filter_by(id=team).first().state).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
                 msg=Message(subject, sender=session["email"], recipients=[Coach.query.filter_by(id=coach.id).first().email])
                 msg.body=content
                 mail.send(msg)
+    current_app.config.update(dict(
+            MAIL_USERNAME='collegeemailsgenerator@gmail.com',
+            MAIL_PASSWORD='Medical2020!'
+        ))
+    mail.init_app(current_app)
