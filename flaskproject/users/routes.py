@@ -19,7 +19,7 @@ def register():
         db.session.commit()
         user=User.query.filter_by(email=form.email.data).first()
         login_user(user, remember=form.remember.data)
-        flash(f'Account was created for {form.email.data}!', 'success')
+        flash(f'Welcome {form.email.data}!', 'success')
         return redirect(url_for('main.home'))
     return render_template('register.html', title='Register', form=form)
 
@@ -41,6 +41,7 @@ def login():
 @users.route('/logout')
 def logout():
     logout_user()
+    flash('Logout successful!', 'success')
     return redirect(url_for('main.home'))
 
 @users.route('/account', methods=['GET', 'POST'])
