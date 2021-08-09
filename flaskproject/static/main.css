@@ -86,3 +86,8 @@ body {
   .teams-para{
     height:7em;
   }
+
+  .recaptcha-error{
+    font-size: small;
+    color:red;
+  }

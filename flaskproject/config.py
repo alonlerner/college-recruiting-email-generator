@@ -7,3 +7,6 @@ class Config:
     MAIL_USE_SSL=True
     MAIL_USERNAME='collegeemailsgenerator@gmail.com'
     MAIL_PASSWORD='Medical2020!'
+    RECAPTCHA_PUBLIC_KEY='6LckvOMbAAAAAMfW8UFb3XI-Da_MJPTqkew8ESvN'
+    RECAPTCHA_PRIVATE_KEY='6LckvOMbAAAAAEhOdIRnnBdhtzjHKJRax3eJRysz'
+    TESTING=True

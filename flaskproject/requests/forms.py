@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, SubmitField, TextAreaField, PasswordField
 from wtforms.validators import DataRequired, Email, InputRequired
 from flaskproject.requests.utils import MultiCheckboxField
@@ -19,4 +19,5 @@ class ReviewRequestForm(FlaskForm):
     subject=StringField('Subject')
     content=TextAreaField('Content')
     teams=TextAreaField('Teams')
+    recaptcha=RecaptchaField()
     submit=SubmitField('Send Emails')

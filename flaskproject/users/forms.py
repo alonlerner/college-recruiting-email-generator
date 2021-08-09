@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_login import current_user
@@ -8,6 +8,7 @@ class RegistrationForm(FlaskForm):
     email=StringField('Email', validators=[DataRequired(), Email()])
     password=PasswordField('Password',validators=[DataRequired(),Length(min=3)])
     confirm_password=PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    recaptcha=RecaptchaField()
     remember=BooleanField('Remember Me')
     submit=SubmitField('Sign Up')
 
@@ -20,6 +21,7 @@ class LoginForm(FlaskForm):
     email=StringField('Email', validators=[DataRequired(), Email()])
     password=PasswordField('Password',validators=[DataRequired()])
     remember=BooleanField('Remember Me')
+    recaptcha=RecaptchaField()
     submit=SubmitField('Login')
 
 class UpdateAccountForm(FlaskForm):
