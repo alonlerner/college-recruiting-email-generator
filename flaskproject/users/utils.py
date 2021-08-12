@@ -6,8 +6,8 @@ from flaskproject import mail
 def send_reset_email(user):
     token=user.get_reset_token()
     current_app.config.update(dict(
-            MAIL_USERNAME='collegeemailsgenerator@gmail.com',
-            MAIL_PASSWORD='Medical2020!'
+            MAIL_USERNAME=current_app.config['DEFAULT_MAIL_USERNAME'],
+            MAIL_PASSWORD=current_app.config['DEFAULT_MAIL_PASSWORD']
         ))
     mail.init_app(current_app)
     msg=Message('Password Reset Request', sender='collegeemailsgenerator@gmail.com', recipients=[user.email])

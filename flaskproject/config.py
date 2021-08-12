@@ -5,6 +5,8 @@ class Config:
     MAIL_SERVER='smtp.gmail.com'
     MAIL_PORT=465
     MAIL_USE_SSL=True
+    DEFAULT_MAIL_USERNAME='collegeemailsgenerator@gmail.com'
+    DEFAULT_MAIL_PASSWORD='Medical2020!'
     MAIL_USERNAME='collegeemailsgenerator@gmail.com'
     MAIL_PASSWORD='Medical2020!'
     RECAPTCHA_PUBLIC_KEY='6LckvOMbAAAAAMfW8UFb3XI-Da_MJPTqkew8ESvN'
