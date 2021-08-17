@@ -14,16 +14,19 @@
                 </div>
                 <div class="form-group">
                     {{ form.content.label(class="form-control-label") }}
-                    {{ form.content(class="form-control form control-lg email-content", placeholder=content, readonly="readonly") }}
+                    <div id="content" class="form-control form-control-lg overflow-auto text-wrap" style="word-break: break-word;" readonly></div>
                 </div>
                 <div class="form-group">
                     {{ form.teams.label(class="form-control-label") }}
-                    {{ form.teams(class="form-control form control-lg teams-para", placeholder=teams, readonly="readonly") }}
+                    {{ form.teams(class="form-control form control-lg", placeholder=teams, readonly="readonly") }}
                 </div>
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
+        <script type="text/javascript">
+            document.getElementById("content").innerHTML= {{content | tojson}};
+        </script>
     </div>
 {% endblock content %}

@@ -62,7 +62,7 @@ def account():
 def user_requests():
     page=request.args.get('page', 1, type=int)
     user=User.query.filter_by(email=current_user.email).first()
-    requests=Request.query.filter_by(sender=current_user).order_by(Request.date_submitted.desc()).paginate(page=page, per_page=5)
+    requests=Request.query.filter_by(sender=current_user).order_by(Request.date_submitted.desc()).paginate(page=page, per_page=7)
     return render_template('user_requests.html', requests=requests, user=user)
 
 @users.route("/reset_password", methods=['GET', 'POST'])

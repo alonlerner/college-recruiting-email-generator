@@ -7,9 +7,13 @@
         <small>{{ emails_request.name }}</small>
         <small class="text-muted">{{ emails_request.date_submitted.strftime('%m/%d/%Y') }}</small>
       </div>
-      <h2 class="article-title">{{ emails_request.subject }}</h2>
-      <p class="article-content">{{ emails_request.content }}</p>
+      <h2 class="article-title mb-4">{{ emails_request.subject }}</h2>
+      <!--<p class="article-content">{{ emails_request.content }}</p>-->
+      <div id="content" class="overflow-auto text-wrap" style="word-break: break-word;"></div>
       <p class="text-muted">Teams: {% for team in emails_request.teams %} {{ team.name }}; {% endfor %}</p>
     </div>
+    <script type="text/javascript">
+      document.getElementById("content").innerHTML= {{emails_request.content | tojson}};
+    </script>
   </article>
 {% endblock content %}

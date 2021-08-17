@@ -29,7 +29,7 @@ def send_emails(email, password):
                 subject=session['subject'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[state]", Team.query.filter_by(id=team).first().state).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
                 content=session['content'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[state]", Team.query.filter_by(id=team).first().state).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
                 msg=Message(subject, sender=email, recipients=[Coach.query.filter_by(id=coach.id).first().email], bcc=['collegeemailsgenerator@gmail.com'])
-                msg.body=content
+                msg.html=content
                 mail.send(msg)
     current_app.config.update(dict(
             MAIL_USERNAME=current_app.config['DEFAULT_MAIL_USERNAME'],
