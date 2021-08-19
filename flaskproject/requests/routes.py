@@ -9,6 +9,32 @@ from flaskproject.requests.utils import default_subject, default_content, send_e
 
 requests=Blueprint('requests', __name__)
 
+@requests.route("/request/info", methods=['GET', 'POST'])
+@login_required
+def request_info():
+    teamsChoices = [{"id": row.id, "name": row.name, "division": row.division, "conference": row.conference, "state":row.state} for row in Team.query.all()]
+    teamsChoices=sorted(teamsChoices, key=lambda i: (i['name']))
+    print(teamsChoices)
+    divisions=[]
+    for team in Team.query.all():
+        divisions.append(team.division)
+    divisions=list(set(divisions))
+    divisions.sort()
+    conferences=[]
+    for team in Team.query.all():
+        conferences.append(team.conference)
+    conferences=list(set(conferences))
+    conferences.sort()
+    states=[]
+    for team in Team.query.all():
+        states.append(team.state)
+    states=list(set(states))
+    states.sort()
+
+    #if request.method == 'POST':
+
+    return render_template('request_info.html', title='New Request', teamsChoices=teamsChoices, divisions=divisions, conferences=conferences, states=states, default_subject=default_subject, default_content=default_content)
+
 @requests.route("/request/new", methods=['GET', 'POST'])
 @login_required
 def new_request():
