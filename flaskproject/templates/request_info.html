@@ -15,12 +15,12 @@
         </div>
         <div class="form-group">
             <label class="form-control-label">Subject</label>
-            <input class="form-control" id="subject" placeholder='{{ default_subject }}'>
+            <input class="form-control" id="subject" placeholder='{{ default_subject }}' v-model="subject">
             <span class="recaptcha-error" v-if="subjectError">This field is required.</span>
         </div>
         <div class="form-group">
             <label class="form-control-label">Content</label>
-            <input class="form-control" id="content_section" placeholder='{{ default_content }}' >
+            <input class="form-control" id="content_section" placeholder='{{ default_content }}' v-bind="content">
             <span class="recaptcha-error" v-if="contentError">This field is required.</span>
         </div>
         <div id="app" class="form-group row">      
@@ -67,6 +67,7 @@
         <span class="recaptcha-error" v-if="teamsError">This field is required.</span>
     </fieldset>
     <div class="btn btn-outline-info mb-3">Review</div>
+    
     <script>
         new Vue({
             el: '#app',
@@ -80,7 +81,9 @@
                 stateSelected: '',
                 subjectError: false,
                 contentError: false,
-                teamsError: false
+                teamsError: false,
+                subject:'',
+                content:''
             },
             methods:{
                 exchange: function(){
@@ -110,34 +113,48 @@
                         var textB = b.name.toUpperCase();
                         return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
                     });
+                    this.filter()
                 },
                 filter: function(){
                     this.nonselectedTeams=[...this.teams]
-                    if(this.divisionSelected !== ""){
-                        for(var i=0;i<this.nonselectedTeams.length;i++){
-                            if(this.nonselectedTeams[i].division !== this.divisionSelected){
+                    for(var i=0;i<this.nonselectedTeams.length;i++){
+                        if(this.divisionSelected !== '' && this.divisionSelected !== this.nonselectedTeams[i].division){
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                            continue
+                        }
+                        if(this.conferenceSelected !== '' && this.conferenceSelected !== this.nonselectedTeams[i].conference){
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                            continue
+                        }
+                        if(this.stateSelected !== '' && this.stateSelected !== this.nonselectedTeams[i].state){
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                            continue
+                        }
+                        for(var j=0;j<this.selectedTeams.length;j++){
+                            if(this.nonselectedTeams[i].id === this.selectedTeams[j].id){
                                 this.nonselectedTeams.splice(i,1)
                                 i--
+                                break
                             }
                         }
                     }
-                    if(this.conferenceSelected !== ""){
-                        for(var i=0;i<this.nonselectedTeams.length;i++){
-                            if(this.nonselectedTeams[i].conference !== this.conferenceSelected){
-                                this.nonselectedTeams.splice(i,1)
-                                i--
-                            }
-                        }
+                },
+                submit(){
+                    $.ajax({
+                    type: 'POST',
+                    url: '/submit_request_info',
+                    data: {
+                        
                     }
-                    if(this.stateSelected !== ""){
-                        for(var i=0;i<this.nonselectedTeams.length;i++){
-                            if(this.nonselectedTeams[i].state !== this.stateSelected){
-                                this.nonselectedTeams.splice(i,1)
-                                i--
-                            }
-                        }
-                    }
-
+                    }).done(function(redirect){
+                        console.log("FINISHED HLD-MACHINE");
+                        window.location.href = "/queue_component";
+                    }).fail(function(jqXHR, textStatus, errorThrown){
+                        alert('Something is Wrong!!!');
+                    });
                 }
             }
         });
