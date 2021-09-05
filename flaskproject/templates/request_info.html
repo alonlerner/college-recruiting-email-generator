@@ -20,7 +20,7 @@
         </div>
         <div class="form-group">
             <label class="form-control-label">Content</label>
-            <input class="form-control" id="content_section" placeholder='{{ default_content }}' v-bind="content">
+            <ckeditor class="form-control" id="content_section" placeholder='{{ default_content }}' v-model="content"></ckeditor>
             <span class="recaptcha-error" v-if="contentError">This field is required.</span>
         </div>
         <div id="app" class="form-group row">      
@@ -66,9 +66,12 @@
         </div>
         <span class="recaptcha-error" v-if="teamsError">This field is required.</span>
     </fieldset>
-    <div class="btn btn-outline-info mb-3">Review</div>
-    
+    <div class="btn btn-outline-info mb-3" @click="submit">Review</div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="../static/node_modules/ckeditor4-vue/dist/ckeditor.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
+        Vue.use( CKEditor );
         new Vue({
             el: '#app',
             delimiters: ['[[', ']]'],
@@ -142,23 +145,20 @@
                         }
                     }
                 },
-                submit(){
-                    $.ajax({
-                    type: 'POST',
-                    url: '/submit_request_info',
-                    data: {
-                        
-                    }
-                    }).done(function(redirect){
-                        console.log("FINISHED HLD-MACHINE");
-                        window.location.href = "/queue_component";
-                    }).fail(function(jqXHR, textStatus, errorThrown){
-                        alert('Something is Wrong!!!');
-                    });
+                submit: function(){
+                    this.subjectError = this.subject.trim() === "" ? true : false
+                    this.contentError = this.content.trim() === "" ? true : false
+                    this.teamsError = this.selectedTeams.length === 0 ? true : false
+                    axios.post("{{ url_for('requests.submit_request_info') }}", {
+                        subject: this.subject,
+                        content: this.content,
+                        teams: this.selectedTeams
+                    }).then(function(response){
+                        window.location.href = "{{ url_for('requests.review_request') }}"
+                    })
                 }
             }
         });
-        CKEDITOR.replace("content_section");
     </script>
     
 </div>
