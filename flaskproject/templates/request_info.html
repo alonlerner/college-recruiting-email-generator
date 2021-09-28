@@ -1,0 +1,165 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="app" class="content-section">
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">New Request</legend>
+        <div class="form-group">
+            <label class="form-control-label"><b>Use the following combinations to express the corresponded data (the combinations are case sensative and sensative to white spaces):</b></label>
+            <label class="form-control-label">[team] - the college's name (e.g. NJIT)</label><br>
+            <label class="form-control-label">[division] - the college's division (e.g. NCAA division I)</label><br>
+            <label class="form-control-label">[conference] - the college's conference (e.g. America East)</label><br>
+            <label class="form-control-label">[state] - the college's name (e.g. Alabama)</label><br>
+            <label class="form-control-label">[mascot] - the college's mascot (e.g. lion)</label><br>
+            <label class="form-control-label">[coach-first-name] - the coach's first name (e.g. John)</label><br>
+            <label class="form-control-label">[coach-last-name] - the coach's last name (e.g. James)</label>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label">Subject</label>
+            <input class="form-control" id="subject" placeholder='{{ default_subject }}' v-model="subject">
+            <span class="recaptcha-error" v-if="subjectError">This field is required.</span>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label">Content</label>
+            <ckeditor class="form-control" id="content_section" placeholder='{{ default_content }}' v-model="content"></ckeditor>
+            <span class="recaptcha-error" v-if="contentError">This field is required.</span>
+        </div>
+        <div id="app" class="form-group row">      
+            <div class="col-lg-5 col-md-5 col-sm-12 align-self-end">
+                <label class="form-control-label">Teams</label>
+                <select class="form-select col-lg-12 col-md-12 col-sm-12 mb-2" aria-label="Default select example" v-model="divisionSelected" @change="filter">
+                    <option value="" selected>Division</option>
+                    {% for division in divisions %}
+                        <option value='{{division}}'>{{division}}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select col-lg-12 col-md-12 col-sm-12 mb-2" aria-label="Default select example" v-model="conferenceSelected" @change="filter">
+                    <option value="" selected>Conference</option>
+                    {% for conference in conferences %}
+                        <option value='{{conference}}'>{{conference}}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select col-lg-12 col-md-12 col-sm-12 mb-3" aria-label="Default select example" v-model="stateSelected" @change="filter">
+                    <option value="" selected>State</option>
+                    {% for state in states %}
+                        <option value='{{state}}'>{{state}}</option>
+                    {% endfor %}
+                </select>
+                <div class="form-control teams-label overflow-auto" style="overflow: auto;">
+                    <div class="form-check" v-for="team in nonselectedTeams" :key="team.id" :team="team">
+                        <input class="form-check-input" type="checkbox" v-bind:value="team.id" v-bind:id="team.id">
+                        <label class="form-check-label" v-bind:for="team.id">[[team.name]]</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12 align-self-center d-flex justify-content-center">
+                <div class="btn btn-outline-info" @click="exchange"><i class="fas fa-exchange-alt"></i></div>
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-12 align-self-end">
+                <label class="form-control-label mb-3">Selected Teams:</label>
+                <div class="form-control teams-label overflow-auto" style="overflow: auto;">
+                    <div class="form-check" v-for="team in selectedTeams" :key="team.id" :team="team">
+                        <input class="form-check-input" type="checkbox" v-bind:value="team.id" v-bind:id='team.id'>
+                        <label class="form-check-label" v-bind:for="[[team.id]]">[[team.name]]</label>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <span class="recaptcha-error" v-if="teamsError">This field is required.</span>
+    </fieldset>
+    <div class="btn btn-outline-info mb-3" @click="submit">Review</div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="../static/node_modules/ckeditor4-vue/dist/ckeditor.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+        Vue.use( CKEditor );
+        new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data:{
+                teams: {{teamsChoices|tojson}},
+                nonselectedTeams:{{teamsChoices|tojson}},
+                selectedTeams:[],
+                divisionSelected: '',
+                conferenceSelected: '',
+                stateSelected: '',
+                subjectError: false,
+                contentError: false,
+                teamsError: false,
+                subject:'',
+                content:''
+            },
+            methods:{
+                exchange: function(){
+                    for(var i=0;i<this.nonselectedTeams.length;i++){
+                        if(document.getElementById(this.nonselectedTeams[i].id).checked){
+                            document.getElementById(this.nonselectedTeams[i].id).checked=false
+                            this.selectedTeams.push(this.nonselectedTeams[i])
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                        }
+                    }
+                    for(var i=0;i<this.selectedTeams.length;i++){
+                        if(document.getElementById(this.selectedTeams[i].id).checked){
+                            document.getElementById(this.selectedTeams[i].id).checked=false
+                            this.nonselectedTeams.push(this.selectedTeams[i])
+                            this.selectedTeams.splice(i,1)
+                            i--
+                        }
+                    }
+                    this.nonselectedTeams.sort(function(a,b) {
+                        var textA = a.name.toUpperCase();
+                        var textB = b.name.toUpperCase();
+                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                    });
+                    this.selectedTeams.sort(function(a,b) {
+                        var textA = a.name.toUpperCase();
+                        var textB = b.name.toUpperCase();
+                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                    });
+                    this.filter()
+                },
+                filter: function(){
+                    this.nonselectedTeams=[...this.teams]
+                    for(var i=0;i<this.nonselectedTeams.length;i++){
+                        if(this.divisionSelected !== '' && this.divisionSelected !== this.nonselectedTeams[i].division){
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                            continue
+                        }
+                        if(this.conferenceSelected !== '' && this.conferenceSelected !== this.nonselectedTeams[i].conference){
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                            continue
+                        }
+                        if(this.stateSelected !== '' && this.stateSelected !== this.nonselectedTeams[i].state){
+                            this.nonselectedTeams.splice(i,1)
+                            i--
+                            continue
+                        }
+                        for(var j=0;j<this.selectedTeams.length;j++){
+                            if(this.nonselectedTeams[i].id === this.selectedTeams[j].id){
+                                this.nonselectedTeams.splice(i,1)
+                                i--
+                                break
+                            }
+                        }
+                    }
+                },
+                submit: function(){
+                    this.subjectError = this.subject.trim() === "" ? true : false
+                    this.contentError = this.content.trim() === "" ? true : false
+                    this.teamsError = this.selectedTeams.length === 0 ? true : false
+                    axios.post("{{ url_for('requests.submit_request_info') }}", {
+                        subject: this.subject,
+                        content: this.content,
+                        teams: this.selectedTeams
+                    }).then(function(response){
+                        window.location.href = "{{ url_for('requests.review_request') }}"
+                    })
+                }
+            }
+        });
+    </script>
+    
+</div>
+{% endblock content %}

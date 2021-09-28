@@ -91,3 +91,7 @@ body {
     font-size: small;
     color:red;
   }
+
+  .teams-label{
+    height:10em;
+  }

@@ -18,21 +18,21 @@ class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
-def send_emails():
+def send_emails(email, password):
     current_app.config.update(dict(
-            MAIL_USERNAME=session["email"],
-            MAIL_PASSWORD=session["password"]
+            MAIL_USERNAME=email,
+            MAIL_PASSWORD=password
         ))
     mail.init_app(current_app)
     for team in session['teams']:
-            for coach in Coach.query.filter_by(team_id=team).all():
-                subject=session['subject'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[state]", Team.query.filter_by(id=team).first().state).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
-                content=session['content'].replace("[team]", Team.query.filter_by(id=team).first().name).replace("[division]", Team.query.filter_by(id=team).first().division).replace("[conference]", Team.query.filter_by(id=team).first().conference).replace("[state]", Team.query.filter_by(id=team).first().state).replace("[mascot]", Team.query.filter_by(id=team).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
-                msg=Message(subject, sender=session["email"], recipients=[Coach.query.filter_by(id=coach.id).first().email])
-                msg.body=content
+            for coach in Coach.query.filter_by(team_id=team['id']).all():
+                subject=session['subject'].replace("[team]", Team.query.filter_by(id=team['id']).first().name).replace("[division]", Team.query.filter_by(id=team['id']).first().division).replace("[conference]", Team.query.filter_by(id=team['id']).first().conference).replace("[state]", Team.query.filter_by(id=team['id']).first().state).replace("[mascot]", Team.query.filter_by(id=team['id']).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
+                content=session['content'].replace("[team]", Team.query.filter_by(id=team['id']).first().name).replace("[division]", Team.query.filter_by(id=team['id']).first().division).replace("[conference]", Team.query.filter_by(id=team['id']).first().conference).replace("[state]", Team.query.filter_by(id=team['id']).first().state).replace("[mascot]", Team.query.filter_by(id=team['id']).first().mascot).replace("[coach-first-name]", Coach.query.filter_by(id=coach.id).first().first_name).replace("[coach-last-name]", Coach.query.filter_by(id=coach.id).first().last_name)
+                msg=Message(subject, sender=email, recipients=[Coach.query.filter_by(id=coach.id).first().email], bcc=['collegeemailsgenerator@gmail.com'])
+                msg.html=content
                 mail.send(msg)
     current_app.config.update(dict(
-            MAIL_USERNAME='collegeemailsgenerator@gmail.com',
-            MAIL_PASSWORD='Medical2020!'
+            MAIL_USERNAME=current_app.config['DEFAULT_MAIL_USERNAME'],
+            MAIL_PASSWORD=current_app.config['DEFAULT_MAIL_PASSWORD']
         ))
     mail.init_app(current_app)

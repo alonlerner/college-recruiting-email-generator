@@ -10,7 +10,7 @@
               <small class="text-muted">{{ request.date_submitted.strftime('%m/%d/%Y') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('requests.request_details', request_id=request.id) }}">{{ request.subject }}</a></h2>
-            <p class="article-content">{{ request.content }}</p>
+            <p class="text-muted">Teams: {% for team in request.teams %} {{ team.name }}; {% endfor %}</p>
           </div>
         </article>
     {% endfor %}
